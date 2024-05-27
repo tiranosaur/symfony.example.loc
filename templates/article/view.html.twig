@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Article Controller{% endblock %}
+
+{% block body %}
+    <style>
+        #main {
+            margin: 2% 10% 1% 10%;
+        }
+
+        #article {
+            margin: 1% 0%;
+        }
+
+        #article_price {
+            width: 4em;
+        }
+    </style>
+    <div id="main">
+        <div id="article">
+        </div>
+
+        <div>
+            <input type="text" id="article_title" name="article_title" placeholder="article title">
+            <input type="number" step="0.01" id="article_price" name="article_price" value="1.00"><br>
+            <textarea name="article_content" id="article_content" cols="30" rows="10"
+                      placeholder="Content"></textarea><br>
+            <button id="button_send">send</button>
+        </div>
+    </div>
+
+
+    <script>
+        let articleElement = document.getElementById("article");
+        setArticles();
+
+        let button = document.getElementById("button_send");
+        let articleTitle = document.getElementById("article_title");
+        let articlePrice = document.getElementById("article_price");
+        let articleContent = document.getElementById("article_content");
+        button.addEventListener("click", createArticle);
+
+        function setArticles() {
+            let counter = 1;
+            articleElement.innerHTML = "";
+            return fetch('/article/all/10/0', {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json;charset=utf-8'}
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            }).then(result => {
+                result.forEach(item => {
+                    articleElement.innerHTML += `<div>${counter++}. ${item["title"]} - ${item["price"]}</div>`;
+                });
+            }).catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+
+        function createArticle() {
+            let title = articleTitle.value;
+            let price = parseFloat(articlePrice.value);
+            let content = articleContent.innerText;
+
+            let articleData = {
+                title: title,
+                price: price,
+                content: content
+            };
+
+            return fetch('/article', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json;charset=utf-8'},
+                body: JSON.stringify(articleData)
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response/*.json()*/;
+            }).then(result => {
+                articleElement.innerHTML = "";
+                setArticles();
+            }).catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+    </script>
+{% endblock %}
