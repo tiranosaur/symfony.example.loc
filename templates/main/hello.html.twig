@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Hello page {% endblock %}
+
+{% block body %}
+<div>
+    {% if app.user %}
+        <h1>{{ message }} {{ app.user.username }}</h1>
+    {% else %}
+        <h1>{{ message }} annon!!!</h1>
+    {% endif %}
+</div>
+<div>
+    {% if is_granted('PUBLIC_ACCESS') -%}
+        # You're `PUBLIC_ACCESS`
+    {% endif %}
+    {% if is_granted('ROLE_SUPER_ADMIN') -%}
+        # You're `ROLE_SUPER_ADMIN`
+    {% endif %}
+    {% if is_granted('ROLE_ADMIN') -%}
+        # You're `ROLE_ADMIN`
+    {% endif %}
+    {% if is_granted('ROLE_USER') -%}
+        # You're `ROLE_USER`
+    {% endif %}
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        # This user entered their credentials THIS session
+    {% endif %}
+    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+        # User logged in via a cookie (ie: Auth again before doing sensitive things)
+    {% endif %}
+    {% if is_granted('IS_AUTHENTICATED_ANONYMOUSLY') %}
+        # This is a `guest` or anonymous user
+    {% endif %}
+</div>
+{% endblock %}
+
