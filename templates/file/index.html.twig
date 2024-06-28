@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}File Handling!{% endblock %}
+
+{% block body %}
+    <style>
+        tr, td, th {
+            border: 1px solid black;
+        }
+    </style>
+    <table>
+        <tr>
+            <th>filename</th>
+            <th>action</th>
+        </tr>
+        {% for file in files %}
+            <tr id="file-row-{{ loop.index }}">
+                <td><a href="/file/{{ file }}" target="_blank">{{ file }}</a></td>
+                <td>
+                    <button onclick="deleteFile('/file/delete/{{ file }}', {{ loop.index }})">DELETE</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {# {{ dump(files) }} #}
+    <form action="/file" method="post" enctype="multipart/form-data">
+        <input type="file" id="file" name="file">
+        <button type="submit">send</button>
+    </form>
+    <script>
+        function deleteFile(path, rowId) {
+            fetch(path, {method: "DELETE"})
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById("file-row-" + rowId).remove();
+                    } else {
+                        console.error('Failed to delete the file.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+{% endblock %}
