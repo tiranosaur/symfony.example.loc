@@ -38,21 +38,13 @@ class MainControllerTest extends WebTestCase
     }
 
     public function testIndex(): void {
-        $this->mainServiceMock
-            ->expects($this->once())
-            ->method('getHelloArray')
-            ->willReturn($this->response);
-
         $client = static::createClient();
-        $client->getContainer()->set(MainService::class, $this->mainServiceMock);
+        $crawler = $client->request('GET', '/');
 
-        $client->request('GET', '/');
         $this->assertResponseIsSuccessful();
-        $this->assertJson($client->getResponse()->getContent());
-        $responseData = json_decode($client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('status', $responseData);
-        $this->assertArrayHasKey('message', $responseData);
-        $this->assertSame('OK', $responseData['status']);
-        $this->assertSame('Welcome to your new controller!', $responseData['message']);
+        $this->assertSelectorTextContains('title', 'Main Page');
+        $this->assertSelectorExists('main');
+        $this->assertSelectorExists('header');
+        $this->assertSelectorExists('footer');
     }
 }
